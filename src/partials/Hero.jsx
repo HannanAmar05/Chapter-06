@@ -1,37 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore from 'swiper' 
-import {Autoplay, Pagination} from 'swiper/modules'
-import 'swiper/swiper-bundle.css'; // Import Swiper styles
-import { Heroitem } from '../components/Heroitem';
+import React, { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore from "swiper";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/swiper-bundle.css"; // Import Swiper styles
+import { Heroitem } from "../components/Heroitem";
+import { useDataNowPlayin } from "../services/Movie/get-movie-nowplaying";
+import { useDispatch, useSelector } from "react-redux";
+import { GetMovie } from "../redux/actions/Movie/MoviePopular";
 
 export const Hero = () => {
-  const [loadData, setLoadData] = useState([]);
+  // const [loadData, setLoadData] = useState([]);
+  // const { data: movie } = useDataNowPlayin();
+  // const { data: movie } = useDataPopularMovie();
+
+  const dispatch = useDispatch();
+  const loadData = useSelector((state) => state.movies.movie);
+  console.log(loadData)
 
   useEffect(() => {
-    dataMovie();
+    dispatch(GetMovie());
   }, []);
-
-  const options = {
-    method: 'GET',
-    url: `${process.env.REACT_APP_SERVER}3/movie/now_playing?language=en-US&page=1`,
-    headers: {
-      accept: 'application/json',
-      Authorization:
-        `Bearer ${process.env.REACT_APP_KEY} `,
-    },
-  };
-
-  const dataMovie = async () => {
-    try {
-      const response = await axios.request(options);
-      setLoadData(response.data.results);
-      console.log(response.data.results);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   SwiperCore.use([Autoplay, Pagination]);
 
@@ -42,7 +30,7 @@ export const Hero = () => {
       spaceBetween={0}
       slidesPerView={1}
     >
-      {loadData.map((movie) => (
+      {loadData?.map((movie)=> (
         <SwiperSlide key={movie.id}>
           <Heroitem movie={movie} />
         </SwiperSlide>

@@ -1,46 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { Header } from "../partials/Header";
-import axios from "axios";
 import Button from "../components/Button";
-
+import { useDispatch, useSelector } from "react-redux";
+import { GetDetailMovie } from "../redux/actions/Movie/MovieDetail";
+import { useNavigate, useParams } from "react-router-dom";
+import { CookiesKey, CookiesStorage } from "../utils/cookies";
 
 export const DetailsMovie = () => {
-  const [Details, setDetails] = useState("");
+  // const [Details, setDetails] = useState("");
+  const dispatch = useDispatch()
+  const Details = useSelector((state) => state.detail.MovieDetail)
+  const params = useParams()
+  const navigate = useNavigate()
 
-  const { id } = useParams();
-
+  console.log(Details, "detailss")
   useEffect(() => {
-    dataMovie();
-  });
+   dispatch(GetDetailMovie(params))
+  }, [])
+  
+  // useEffect(() => {
+  //   setDetails(detailMovie);
+  // }, [detailMovie]);
 
-  const options = {
-    method: "GET",
-    url: `${process.env.REACT_APP_SERVER}3/movie/${id}?language=en-US&page=1`,
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${process.env.REACT_APP_KEY} `,
-    },
-  };
+  const bg = `https://image.tmdb.org/t/p/original/${Details?.backdrop_path}`
+    
 
-
-  const dataMovie = async () => {
-    try {
-      const response = await axios.request(options);
-      setDetails(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const bg = `https://image.tmdb.org/t/p/original/${Details.backdrop_path}`;
-
-  const num = Details && Details.vote_average.toFixed(1);
+  const num = Details && typeof Details.vote_average === 'number' ? Details.vote_average.toFixed(1) : null;
 
   return (
     <>
-      <Header/>
-      <div
+      <Header />
+      <div key={Details?.id}
         className="relative bg-cover bg-center z-10"
         style={{ backgroundImage: `url(${bg})` }}
       >
@@ -49,7 +39,7 @@ export const DetailsMovie = () => {
         <div className="z-50 flex flex-col items-start justify-center h-screen relative">
           <div className="mx-20 flex flex-col items-start justify-center gap-6 relative">
             <h1 className="text-5xl text-white uppercase font-bold">
-              {Details.title}
+              {Details?.title}
             </h1>
             <h4 className="">
               {Details && Details.genres
@@ -65,6 +55,7 @@ export const DetailsMovie = () => {
                 : ""}
             </h4>
             <p className="text-white">{Details ? Details.overview : ""}</p>
+            {num !== null && (
             <div className="flex gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -82,6 +73,7 @@ export const DetailsMovie = () => {
               </svg>
               <h4 className="text-white">{num}</h4>
             </div>
+            )}
             <Button variant="watch">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +95,7 @@ export const DetailsMovie = () => {
                 />
               </svg>
               Watch Trailer
-              </Button>
+            </Button>
           </div>
         </div>
       </div>
