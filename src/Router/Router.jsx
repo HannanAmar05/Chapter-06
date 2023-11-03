@@ -7,6 +7,7 @@ import { SearchResult } from "../Page/SearchResult";
 import { Register } from "../Auth/Register";
 import { Login } from "../Auth/Login";
 import TokenProtected from "../redux/protected/Protected";
+import { DetailsPage } from "../Page/DetailsPage";
 // import { Search } from '../components/Search'
 
 export const Router = () => {
@@ -23,7 +24,8 @@ export const Router = () => {
             }
           />
           <Route path="/popular_movie" element={<PopularMovie />} />
-          <Route path="/details/:id" element={<DetailsMovie />} />
+          <Route path="/details/:id" element={<DetailsPage />} />
+          {/* <Route path="/details/:id" element={<DetailsMovie />} /> */}
           <Route path="/search/:query" element={<SearchResult />} />
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />

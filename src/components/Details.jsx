@@ -1,47 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { Header } from "../partials/Header";
-import Button from "../components/Button";
-import { useDataDetailMovie } from "../services/Movie/get-movie-details";
-import { useDispatch, useSelector } from "react-redux";
-import { GetDetailMovie } from "../redux/actions/Movie/MovieDetail";
-import { useNavigate, useParams } from "react-router-dom";
-import { CookiesKey, CookiesStorage } from "../utils/cookies";
+import React,{useEffect} from 'react'
+import { useParams } from 'react-router-dom'
+import http from '../utils/http'
+import { API_ENDPOINT } from '../utils/api-endpoint'
+import { useDispatch, useSelector } from 'react-redux'
+import { setDetail } from '../redux/reducers/Movie/MovieDetail'
+import { Header } from '../partials/Header'
+import Button from './Button'
 
-export const DetailsMovie = () => {
-  // const [Details, setDetails] = useState("");
-  const dispatch = useDispatch()
-  const Details = useSelector((state) => state.detail.MovieDetail)
-  const params = useParams()
-  const navigate = useNavigate()
-
-  const { data: detailMovie } = useDataDetailMovie({
-    api_key: `${process.env.REACT_APP_KEY}`,
-  });
-
-  console.log(Details, "detailss")
-  useEffect(() => {
-    const cekToken = CookiesStorage.get(CookiesKey.AuthToken)
-    if(!cekToken){
-      navigate("/")
+export const Details = () => {
+    const DetailMovie = useSelector((state) => state.detail.MovieDetail)
+    const param = useParams()
+    const dispatch = useDispatch()
+    const GetDetailAPI = async() => {
+        const Data = await http.get(API_ENDPOINT.MOVIE_DETAILS(param.id)? API_ENDPOINT.MOVIE_DETAILS(param.id) : "" )
+        console.log(Data, "DATAAA")
+        dispatch(setDetail(Data.data.data))
     }
-    else{
-      dispatch(GetDetailMovie(params.movieId))
-    }
-  }, [dispatch, params.movieId, navigate])
-  
-  // useEffect(() => {
-  //   setDetails(detailMovie);
-  // }, [detailMovie]);
-
-  const bg = `https://image.tmdb.org/t/p/original/${Details?.backdrop_path}`
-    
-
+    useEffect(() => {
+        GetDetailAPI()
+    }, [])
+  const bg = `https://image.tmdb.org/t/p/original/${DetailMovie?.backdrop_path}`
   const num = Details && typeof Details.vote_average === 'number' ? Details.vote_average.toFixed(1) : null;
-
+    
   return (
     <>
-      <Header />
-      <div key={Details?.id}
+      <div key={DetailMovie?.id}
         className="relative bg-cover bg-center z-10"
         style={{ backgroundImage: `url(${bg})` }}
       >
@@ -50,11 +33,11 @@ export const DetailsMovie = () => {
         <div className="z-50 flex flex-col items-start justify-center h-screen relative">
           <div className="mx-20 flex flex-col items-start justify-center gap-6 relative">
             <h1 className="text-5xl text-white uppercase font-bold">
-              {Details?.title}
+              {DetailMovie?.title}
             </h1>
             <h4 className="">
-              {Details && Details.genres
-                ? Details.genres.map((genre) => (
+              {DetailMovie && DetailMovie.genres
+                ? DetailMovie.genres.map((genre) => (
                     <span
                       className="mx-1 bg-slate-300 bg-opacity-50  op py-2 px-3 rounded-full text-white"
                       id={genre.id}
@@ -65,7 +48,7 @@ export const DetailsMovie = () => {
                   ))
                 : ""}
             </h4>
-            <p className="text-white">{Details ? Details.overview : ""}</p>
+            <p className="text-white">{DetailMovie ? DetailMovie.overview : ""}</p>
             {num !== null && (
             <div className="flex gap-1">
               <svg
@@ -112,4 +95,5 @@ export const DetailsMovie = () => {
       </div>
     </>
   );
-};
+
+}

@@ -11,12 +11,12 @@ import { GetUserRedux } from '../redux/actions/Auth/GetUser'
 
 export const Header = () => {
   const dispatch = useDispatch()
+  const Nama = useSelector((state) => state.user.Datauser)
   
   const dataUser = () => {
     dispatch(GetUserRedux())
   }
-  const Nama = useSelector((state) => state.user.user)
-  console.log(Nama, "NAMA")
+
   useEffect(() => {
     dataUser()
   }, [])
@@ -28,7 +28,7 @@ export const Header = () => {
       <Search></Search>
       <div className='flex'>
       <Link to='/'><Button onClick={logout} variant='Register'>Logout</Button></Link>
-      <Link to='/'><Button variant='Register'>{Nama}</Button></Link>
+      <Link to='/'><Button variant='Register'>{Nama.name}</Button></Link>
       </div>
     </div>
     <div>
