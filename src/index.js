@@ -6,18 +6,19 @@ import { Router } from "./Router/Router";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Provider } from "react-redux";
 import store from "./redux/store/store";
+import { Responsive } from "./Page/Responsive";
 
 const queryMovie = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    {/* <Provider store={store}>
     <QueryClientProvider client={queryMovie}>
       <GoogleOAuthProvider clientId={process.env.REACT_APP_CLIENT_ID}>
-        <Router />
       </GoogleOAuthProvider>
     </QueryClientProvider>
-    </Provider>
+    </Provider> */}
+    <Responsive />
   </React.StrictMode>
 );
